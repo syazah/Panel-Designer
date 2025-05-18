@@ -53,8 +53,13 @@ const CustomerSchema = new mongoose.Schema(
     state: {
       type: String,
     },
-    panelData: {
-      type: mongoose.Schema.Types.Mixed,
+    orderRaised:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order",
+    },
+    collections:{
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "SalesCollection",
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
