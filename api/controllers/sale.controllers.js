@@ -131,7 +131,7 @@ export const SalesAddCustomerController = async (req, res, next) => {
       address,
       city,
       state,
-      panelData:[],
+      panelData: [],
       createdBy: id,
     });
     await newCustomer.save();
@@ -210,7 +210,7 @@ export const SalesCreateOrderController = async (req, res, next) => {
         )
       );
     }
-     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let referenceNumber = "";
 
     for (let i = 0; i < 8; i++) {
@@ -225,6 +225,7 @@ export const SalesCreateOrderController = async (req, res, next) => {
       currentStage: "Sale",
       detailedStage: "admin-to-sales",
       pdfLink: null,
+      assignedTo: id
     });
     await newOrder.save();
 
@@ -246,31 +247,31 @@ export const SalesCreateOrderController = async (req, res, next) => {
 
 export const SalesCreateCollectionController = async (req, res, next) => {
   try {
-    const {_id, name} = req.body
-    const customer = await Customer.findOne({_id})
-    if(!customer){
+    const { _id, name } = req.body
+    const customer = await Customer.findOne({ _id })
+    if (!customer) {
       return next(errorHandler(400, "Customer not found"))
     }
-    if(!_id || !name){
+    if (!_id || !name) {
       return next(errorHandler(400, "Required Fields Not Provided"))
     }
-    
+
     const collection = new SalesCollection({
       name,
       author: _id,
     })
-    
+
     await collection.save()
-    
+
     await Customer.findOneAndUpdate(
-      {_id},
-      {$addToSet: {collections: collection._id}}
+      { _id },
+      { $addToSet: { collections: collection._id } }
     )
-    
+
     // Convert to plain object to avoid circular references
     const collectionObj = collection.toObject();
-    
-    return res.status(200).json({success: true, collection: collectionObj})
+
+    return res.status(200).json({ success: true, collection: collectionObj })
   } catch (error) {
     console.error("Error in SalesCreateCollectionController:", error);
     return next(error);
@@ -280,13 +281,13 @@ export const SalesCreateCollectionController = async (req, res, next) => {
 export const SalesGetCollectionsController = async (req, res, next) => {
   try {
     const { id } = req.body;
-    
-    if(!id || id === "undefined"){
+
+    if (!id || id === "undefined") {
       return next(errorHandler(400, "Required Fields Not Provided - Valid ID is required"));
     }
-    
+
     // Use lean() to get plain JavaScript objects instead of Mongoose documents
-    const customer = await Customer.findOne({_id: id})
+    const customer = await Customer.findOne({ _id: id })
       .populate({
         path: "collections",
         select: 'name author', // Only select necessary fields,
@@ -295,11 +296,11 @@ export const SalesGetCollectionsController = async (req, res, next) => {
         }
       })
       .lean();
-      
-    if(!customer){
+
+    if (!customer) {
       return next(errorHandler(400, "Collection not found"))
     }
-    return res.status(200).json({success: true, data:customer})
+    return res.status(200).json({ success: true, data: customer })
   } catch (error) {
     console.error("Error in SalesGetCollectionsController:", error);
     return next(error);
@@ -308,24 +309,24 @@ export const SalesGetCollectionsController = async (req, res, next) => {
 
 export const SalesGetCollectionController = async (req, res, next) => {
   try {
-    const {id} = req.params;
-    if(!id){
+    const { id } = req.params;
+    if (!id) {
       return next(errorHandler(400, "Required Fields Not Provided"))
     }
-    
+
     // Add await keyword and use lean() to get a plain JavaScript object instead of a Mongoose document
-    const collection = await SalesCollection.findOne({_id:id}).populate({
+    const collection = await SalesCollection.findOne({ _id: id }).populate({
       path: 'author',
       select: 'name email phone' // Only select necessary fields to avoid circular references
     }).populate({
       path: 'panels',
       select: 'panelName panelData' // Include panelData to get more details
     }).lean();
-    
-    if(!collection){
+
+    if (!collection) {
       return next(errorHandler(400, "Collection not found"))
     }
-    return res.status(200).json({success: true, data: collection})
+    return res.status(200).json({ success: true, data: collection })
   } catch (error) {
     console.error("Error in SalesGetCollectionController:", error);
     return next(error);
@@ -335,30 +336,30 @@ export const SalesGetCollectionController = async (req, res, next) => {
 export const SalesAddPanelsToCollectionController = async (req, res, next) => {
   try {
     const { panelData, collectionId, token } = req.body;
-    
+
     if (!panelData || !collectionId || !token) {
       return next(errorHandler(400, "Required fields not provided"));
     }
-    
+
     // Verify token
     const { id } = await jwt.verify(token, process.env.JWT_SECRET);
     if (!id) {
       return next(errorHandler(400, "Invalid token"));
     }
-    
+
     // Find the collection
     const collection = await SalesCollection.findById(collectionId);
     if (!collection) {
       return next(errorHandler(404, "Collection not found"));
     }
-    
+
     // Add panels to collection
     collection.panels = collection.panels ? [...collection.panels, ...panelData] : panelData;
     await collection.save();
-    
-    return res.status(200).json({ 
-      success: true, 
-      message: "Panels added to collection successfully" 
+
+    return res.status(200).json({
+      success: true,
+      message: "Panels added to collection successfully"
     });
   } catch (error) {
     console.error("Error adding panels to collection:", error);
@@ -368,7 +369,7 @@ export const SalesAddPanelsToCollectionController = async (req, res, next) => {
 
 export const SalesPanelCreateController = async (req, res, next) => {
   try {
-    const {panelData, collectionId} = req.body;
+    const { panelData, collectionId } = req.body;
     if (!panelData || !collectionId) {
       return next(errorHandler(400, "Required fields not provided"));
     }
@@ -401,13 +402,13 @@ export const SalesDeleteCollectionController = async (req, res, next) => {
     if (!id) {
       return next(errorHandler(400, "Required Fields Not Provided"));
     }
-    
+
     // Find the collection
     const collection = await SalesCollection.findById(id);
     if (!collection) {
       return next(errorHandler(404, "Collection not found"));
     }
-    
+
     // Delete the collection
     await SalesCollection.findByIdAndDelete(id);
     // Remove the collection reference from the customer
@@ -429,7 +430,7 @@ export const SalesGetCompleteDetailController = async (req, res, next) => {
     if (!id) {
       return next(errorHandler(400, "Required Fields Not Provided"));
     }
-    
+
     // Find the collection
     const customer = await Customer.findById(id).populate({
       path: 'collections',
