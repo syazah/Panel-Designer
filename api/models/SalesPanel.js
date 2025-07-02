@@ -12,6 +12,10 @@ const SalesPanelSchema = new mongoose.Schema({
   panelData: {
     type: mongoose.Schema.Types.Mixed,
   },
+  quantity: {
+    type: Number,
+    default: 1,
+  },
 });
 
 export const SalesPanel = mongoose.model("SalesPanel", SalesPanelSchema);

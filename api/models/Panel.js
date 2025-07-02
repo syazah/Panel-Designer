@@ -17,6 +17,10 @@ const PanelSchema = new mongoose.Schema({
   panelData: {
     type: mongoose.Schema.Types.Mixed,
   },
+  quantity:{
+    type: Number,
+    default: 1,
+  },
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
