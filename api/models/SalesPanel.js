@@ -16,6 +16,10 @@ const SalesPanelSchema = new mongoose.Schema({
     type: Number,
     default: 1,
   },
+  remarks:{
+    type: String,
+    default: "",
+  }
 });
 
 export const SalesPanel = mongoose.model("SalesPanel", SalesPanelSchema);

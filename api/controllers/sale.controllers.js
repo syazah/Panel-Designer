@@ -369,7 +369,7 @@ export const SalesAddPanelsToCollectionController = async (req, res, next) => {
 
 export const SalesPanelCreateController = async (req, res, next) => {
   try {
-    const { panelData, collectionId, quantity } = req.body;
+    const { panelData, collectionId, quantity, remarks } = req.body;
     if (!panelData || !collectionId) {
       return next(errorHandler(400, "Required fields not provided"));
     }
@@ -384,6 +384,7 @@ export const SalesPanelCreateController = async (req, res, next) => {
       parentCollection: collectionId,
       panelData: panelData,
       quantity: quantity || 1,
+      remarks: remarks || "",
     })
     await newPanel.save();
     // Add the new panel to the collection
