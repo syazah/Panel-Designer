@@ -2,6 +2,8 @@
 
 Welcome to the Smart Home Panel Designer repository! This web application allows users to design and customize their smart home panels with ease. Whether you are looking to create a unique smart home interface or choose from predefined options, our tool provides a seamless experience.
 
+Factory Management App Link: https://github.com/syazah/alisan-factory
+
 ## Features
 
 - **Custom Design**: Design your own smart home panels with intuitive drag-and-drop functionality.
